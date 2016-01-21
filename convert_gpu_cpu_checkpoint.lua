@@ -14,6 +14,8 @@ require 'lfs'
 require 'util.OneHot'
 require 'util.misc'
 
+require 'string'
+
 cmd = torch.CmdLine()
 cmd:text()
 cmd:text('Sample from a character-level language model')
@@ -67,7 +69,7 @@ for k,v in pairs(protos) do
 	protos[k]:double()
 end
 
-local savefile = opt.model .. '_cpu.t7' -- append "cpu.t7" to filename
+local savefile = string.sub(opt.model,1,-4) .. '_cpu.t7' -- append "cpu.t7" to filename
 torch.save(savefile, checkpoint)
 print('saved ' .. savefile)
 
