@@ -243,7 +243,7 @@ function eval_split(split_index, max_batches)
         end
         -- carry over lstm state
         rnn_state[0] = rnn_state[#rnn_state]
-        print(i .. '/' .. n .. '...')
+        xlua.progress(i,n)
     end
 
     loss = loss / opt.seq_length / n
@@ -308,6 +308,7 @@ local iterations = opt.max_epochs * loader.ntrain
 local iterations_per_epoch = loader.ntrain
 local loss0 = nil
 for i = 1, iterations do
+    -- xlua.progress(i,iterations)
     local epoch = i / loader.ntrain
 
     local timer = torch.Timer()
