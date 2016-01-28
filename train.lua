@@ -335,24 +335,28 @@ for i = 1, iterations do
         end
     end
 
+    local best_loss = math.huge
     -- every now and then or on last iteration
     if i % opt.eval_val_every == 0 or i == iterations then
         -- evaluate loss on validation data
         local val_loss = eval_split(2) -- 2 = validation
         val_losses[i] = val_loss
 
-        local savefile = string.format('%s/lm_%s_epoch%.2f_%.4f.t7', opt.checkpoint_dir, opt.savefile, epoch, val_loss)
-        print('saving checkpoint to ' .. savefile)
-        local checkpoint = {}
-        checkpoint.protos = protos
-        checkpoint.opt = opt
-        checkpoint.train_losses = train_losses
-        checkpoint.val_loss = val_loss
-        checkpoint.val_losses = val_losses
-        checkpoint.i = i
-        checkpoint.epoch = epoch
-        checkpoint.vocab = loader.vocab_mapping
-        torch.save(savefile, checkpoint)
+        print(string.format('Validation loss: %.4f Best validation loss: %.4f', val_loss, best_loss))
+        if val_loss <= best_loss then
+            local savefile = string.format('%s/lm_%s_best_model.t7', opt.checkpoint_dir, opt.savefile)
+            print('saving checkpoint to ' .. savefile)
+            local checkpoint = {}
+            checkpoint.protos = protos
+            checkpoint.opt = opt
+            checkpoint.train_losses = train_losses
+            checkpoint.val_loss = val_loss
+            checkpoint.val_losses = val_losses
+            checkpoint.i = i
+            checkpoint.epoch = epoch
+            checkpoint.vocab = loader.vocab_mapping
+            torch.save(savefile, checkpoint)
+        end
     end
 
     if i % opt.print_every == 0 then
